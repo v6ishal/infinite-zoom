@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Viewport Position Fix Test</title>
+    <style>
+        body {
+            font-family: monospace;
+            padding: 20px;
+            background: #f0f8ff;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-step {
+            margin: 15px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border-left: 4px solid #007bff;
+        }
+        .test-step h3 {
+            margin: 0 0 10px 0;
+            color: #007bff;
+        }
+        .expected {
+            background: #d4edda;
+            border-left-color: #28a745;
+        }
+        .expected h3 {
+            color: #28a745;
+        }
+        .critical {
+            background: #f8d7da;
+            border-left-color: #dc3545;
+        }
+        .critical h3 {
+            color: #dc3545;
+        }
+        .button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        .button:hover {
+            background: #0056b3;
+        }
+        .math {
+            font-family: monospace;
+            background: #e9ecef;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Viewport Position Fix Test</h1>
+        <p>Testing the fix for objects not being visible when created at L1.</p>
+        
+        <div class="test-step critical">
+            <h3>🐛 The Bug</h3>
+            <p>Objects created at L1 were not visible because the viewport position wasn't updated during zoom level reset. Objects were created at correct world coordinates but outside the visible area.</p>
+        </div>
+        
+        <div class="test-step">
+            <h3>🔧 The Fix</h3>
+            <p>During zoom level reset, we now properly scale the viewport position relative to the same center point used for object scaling:</p>
+            <div class="math">
+                viewportX = centerX + (viewportX - centerX) × scaleFactor<br>
+                viewportY = centerY + (viewportY - centerY) × scaleFactor
+            </div>
+        </div>
+        
+        <div class="test-step">
+            <h3>📋 Test Procedure</h3>
+            <ol>
+                <li>Open the main app</li>
+                <li>Draw a circle at center (click middle of canvas)</li>
+                <li>Zoom to 500,000x to trigger L0 → L1 reset</li>
+                <li>Draw another circle at center (should be visible immediately)</li>
+                <li>Zoom back to 1x to trigger L1 → L0 reset</li>
+                <li>Both circles should be visible</li>
+            </ol>
+            <button class="button" onclick="window.open('index.html', '_blank')">Open Main App</button>
+        </div>
+        
+        <div class="test-step expected">
+            <h3>✅ Expected Behavior</h3>
+            <ul>
+                <li>Objects created at L1 should be immediately visible</li>
+                <li>The viewport should stay centered on the same world position</li>
+                <li>Objects should remain visible during all zoom transitions</li>
+                <li>No need to pan to find objects after zoom level reset</li>
+            </ul>
+        </div>
+        
+        <div class="test-step">
+            <h3>🔍 Debug Information</h3>
+            <p>Watch the console for these new log messages:</p>
+            <ul>
+                <li><strong>Viewport Update:</strong> "[ZOOM RESET] Updated viewport position to (X.XX, Y.YY)"</li>
+                <li><strong>Drawing Debug:</strong> "[DRAWING] Mouse down at screen (X, Y) → world (X.XX, Y.YY)"</li>
+                <li><strong>Rendering Debug:</strong> "[RENDER] Viewport bounds: {x: X.XX, y: Y.YY, width: X.XX, height: Y.YY}"</li>
+            </ul>
+        </div>
+        
+        <div class="test-step">
+            <h3>🧮 Mathematical Verification</h3>
+            <p>Example calculation for L0 → L1 reset at zoom center (0, 0):</p>
+            <div class="math">
+                <strong>Before Reset:</strong><br>
+                Zoom: 500,000x, Viewport: (0, 0)<br><br>
+                
+                <strong>After Reset:</strong><br>
+                Zoom: 2x, Scale Factor: 250,000<br>
+                New Viewport: 0 + (0 - 0) × 250,000 = 0<br><br>
+                
+                <strong>Result:</strong> Viewport stays at (0, 0) ✓
+            </div>
+        </div>
+        
+        <div class="test-step">
+            <h3>🎯 Key Improvements</h3>
+            <ul>
+                <li><strong>Viewport Scaling:</strong> Viewport position now scaled with same factor as objects</li>
+                <li><strong>Consistent Center:</strong> Uses same center point for both object and viewport scaling</li>
+                <li><strong>Immediate Visibility:</strong> Objects created after zoom reset are immediately visible</li>
+                <li><strong>Better UX:</strong> No need to search for objects after zoom level changes</li>
+            </ul>
+        </div>
+        
+        <div class="test-step expected">
+            <h3>🚀 Test Results</h3>
+            <p>After running the test, you should see:</p>
+            <ul>
+                <li>✅ Objects created at L1 are immediately visible</li>
+                <li>✅ Viewport stays centered during zoom level resets</li>
+                <li>✅ All objects remain visible during transitions</li>
+                <li>✅ Console shows proper viewport position updates</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html> 

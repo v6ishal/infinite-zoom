@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zoom Level Scaling Debug</title>
+    <style>
+        body {
+            font-family: monospace;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .test-section h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .calculation {
+            background: #f5f5f5;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 3px;
+        }
+        .result {
+            background: #e8f5e8;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        .warning {
+            background: #fff3cd;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 3px;
+            border-left: 4px solid #ffc107;
+        }
+        .error {
+            background: #f8d7da;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 3px;
+            border-left: 4px solid #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <h1>Zoom Level Scaling Debug Tool</h1>
+    
+    <div class="test-section">
+        <h3>Configuration Values</h3>
+        <div class="calculation">
+            zoomResetThreshold: 500,000x<br>
+            zoomResetTarget: 2x<br>
+            zoomResetUpperTarget: 250,000x
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h3>L0 → L1 Transition (Zoom In)</h3>
+        <div class="calculation">
+            Starting zoom: 500,000x<br>
+            Target zoom after reset: 2x<br>
+            Scale factor = currentZoom / resetTarget = 500,000 / 2 = 250,000
+        </div>
+        <div class="result">
+            Objects scaled UP by 250,000x<br>
+            Example: 10px object → 2,500,000px object
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h3>L1 → L0 Transition (Zoom Out) - OLD CALCULATION</h3>
+        <div class="calculation">
+            Starting zoom: 1x<br>
+            Target zoom after reset: 250,000x<br>
+            OLD Scale factor = resetTarget / resetThreshold = 2 / 500,000 = 0.000004
+        </div>
+        <div class="error">
+            Objects scaled DOWN by 0.000004x<br>
+            Example: 2,500,000px object → 10px object<br>
+            This should be correct, but objects become too small to see!
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h3>L1 → L0 Transition (Zoom Out) - NEW CALCULATION</h3>
+        <div class="calculation">
+            Starting zoom: 1x<br>
+            Target zoom after reset: 250,000x<br>
+            upwardScaleFactor = resetThreshold / resetTarget = 500,000 / 2 = 250,000<br>
+            NEW Scale factor = 1 / upwardScaleFactor = 1 / 250,000 = 0.000004
+        </div>
+        <div class="result">
+            Objects scaled DOWN by 0.000004x<br>
+            Example: 2,500,000px object → 10px object<br>
+            This should restore original size
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h3>Cumulative Effect Analysis</h3>
+        <div class="calculation">
+            Original object size: 10px<br>
+            After L0→L1: 10px × 250,000 = 2,500,000px<br>
+            After L1→L0: 2,500,000px × 0.000004 = 10px<br>
+        </div>
+        <div class="result">
+            Mathematical restoration: ✓ Correct<br>
+            But objects might be positioned outside viewport or quadtree bounds
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h3>Potential Issues</h3>
+        <div class="warning">
+            1. <strong>Viewport Position:</strong> Objects might be scaled relative to wrong center point<br>
+            2. <strong>Quadtree Bounds:</strong> Scaled objects might exceed quadtree boundaries<br>
+            3. <strong>Floating Point Precision:</strong> Extremely small scale factors might cause precision loss<br>
+            4. <strong>Object Visibility:</strong> Tiny objects might be culled or not rendered
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h3>Proposed Solutions</h3>
+        <div class="calculation">
+            1. <strong>Track Center Point:</strong> Use same center point for up/down transitions<br>
+            2. <strong>Expand Quadtree:</strong> Automatically expand quadtree bounds if objects exceed them<br>
+            3. <strong>Alternative Approach:</strong> Store original coordinates and restore them directly<br>
+            4. <strong>Bounds Checking:</strong> Verify objects are within visible area after scaling
+        </div>
+    </div>
+    
+    <script>
+        // Let's calculate some real examples
+        function calculateScaling() {
+            const zoomResetThreshold = 500000;
+            const zoomResetTarget = 2;
+            const zoomResetUpperTarget = 250000;
+            
+            // Test object
+            const originalSize = 10;
+            console.log(`Original object size: ${originalSize}px`);
+            
+            // L0 → L1
+            const upScaleFactor = zoomResetThreshold / zoomResetTarget;
+            const sizeAfterL1 = originalSize * upScaleFactor;
+            console.log(`After L0→L1: ${originalSize} × ${upScaleFactor} = ${sizeAfterL1}px`);
+            
+            // L1 → L0
+            const downScaleFactor = 1 / upScaleFactor;
+            const sizeAfterL0 = sizeAfterL1 * downScaleFactor;
+            console.log(`After L1→L0: ${sizeAfterL1} × ${downScaleFactor} = ${sizeAfterL0}px`);
+            
+            // Verify
+            const isCorrect = Math.abs(sizeAfterL0 - originalSize) < 0.001;
+            console.log(`Restoration correct: ${isCorrect}`);
+            
+            // Test positioning
+            const originalX = 100;
+            const centerX = 200;
+            console.log(`\nOriginal position: ${originalX}px, Center: ${centerX}px`);
+            
+            // L0 → L1
+            const xAfterL1 = centerX + (originalX - centerX) * upScaleFactor;
+            console.log(`After L0→L1: ${centerX} + (${originalX} - ${centerX}) × ${upScaleFactor} = ${xAfterL1}px`);
+            
+            // L1 → L0
+            const xAfterL0 = centerX + (xAfterL1 - centerX) * downScaleFactor;
+            console.log(`After L1→L0: ${centerX} + (${xAfterL1} - ${centerX}) × ${downScaleFactor} = ${xAfterL0}px`);
+            
+            const positionCorrect = Math.abs(xAfterL0 - originalX) < 0.001;
+            console.log(`Position restoration correct: ${positionCorrect}`);
+        }
+        
+        // Run calculations
+        calculateScaling();
+    </script>
+</body>
+</html> 

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Level Persistence Test</title>
+    <style>
+        body {
+            font-family: monospace;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-step {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-left: 4px solid #007bff;
+            border-radius: 4px;
+        }
+        .test-step h3 {
+            margin: 0 0 10px 0;
+            color: #007bff;
+        }
+        .expected {
+            background: #d4edda;
+            border-left-color: #28a745;
+            color: #155724;
+        }
+        .expected h3 {
+            color: #28a745;
+        }
+        .button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        .button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 Level Persistence Test</h1>
+        <p>This test demonstrates that objects now stay in their original levels without being transferred or scaled.</p>
+        
+        <div class="test-step">
+            <h3>Step 1: Create Objects at L0</h3>
+            <p>1. Open the main app</p>
+            <p>2. Draw 3-4 different shapes (circles, rectangles, lines) at various positions</p>
+            <p>3. Note the current statistics</p>
+            <button class="button" onclick="window.open('index.html', '_blank')">Open Main App</button>
+        </div>
+        
+        <div class="test-step expected">
+            <h3>Expected Result</h3>
+            <p>• Zoom Level: 1.00x (L0)</p>
+            <p>• Objects: 4 (L0) / 4 (all)</p>
+            <p>• All shapes should be visible</p>
+        </div>
+        
+        <div class="test-step">
+            <h3>Step 2: Zoom to L1</h3>
+            <p>1. Zoom in to 500,000x to trigger the first level reset</p>
+            <p>2. You should see the notification "🔄⬆️ Zoom Level Up! Level: 1"</p>
+            <p>3. Note the new statistics</p>
+        </div>
+        
+        <div class="test-step expected">
+            <h3>Expected Result</h3>
+            <p>• Zoom Level: 2.00x (L1)</p>
+            <p>• Objects: 0 (L1) / 4 (all)</p>
+            <p>• No shapes visible (they're in L0, not L1)</p>
+            <p>• Console log: "Transfer requested from level 0 to 1 - SKIPPED"</p>
+        </div>
+        
+        <div class="test-step">
+            <h3>Step 3: Create Objects at L1</h3>
+            <p>1. Draw 2-3 new shapes at L1</p>
+            <p>2. Note the statistics change</p>
+        </div>
+        
+        <div class="test-step expected">
+            <h3>Expected Result</h3>
+            <p>• Zoom Level: 2.00x (L1)</p>
+            <p>• Objects: 3 (L1) / 7 (all)</p>
+            <p>• Only the new L1 shapes should be visible</p>
+        </div>
+        
+        <div class="test-step">
+            <h3>Step 4: Zoom Back to L0</h3>
+            <p>1. Zoom out to 1x to trigger the downward reset</p>
+            <p>2. You should see the notification "🔄⬇️ Zoom Level Down! Level: 0"</p>
+            <p>3. Note the statistics</p>
+        </div>
+        
+        <div class="test-step expected">
+            <h3>Expected Result</h3>
+            <p>• Zoom Level: 250,000x (L0)</p>
+            <p>• Objects: 4 (L0) / 7 (all)</p>
+            <p>• Only the original L0 shapes should be visible</p>
+            <p>• The L1 shapes should NOT be visible</p>
+            <p>• Console log: "Transfer requested from level 1 to 0 - SKIPPED"</p>
+        </div>
+        
+        <div class="test-step">
+            <h3>Step 5: Zoom to Normal View</h3>
+            <p>1. Zoom out to 1x (normal view)</p>
+            <p>2. Verify the original shapes are at their original sizes</p>
+        </div>
+        
+        <div class="test-step expected">
+            <h3>Expected Result</h3>
+            <p>• Zoom Level: 1.00x (L0)</p>
+            <p>• Objects: 4 (L0) / 7 (all)</p>
+            <p>• Original shapes visible at original sizes</p>
+            <p>• NO scaling artifacts or positioning issues</p>
+        </div>
+        
+        <div class="test-step">
+            <h3>🎯 Key Benefits of New Approach</h3>
+            <ul>
+                <li><strong>No Object Transfer:</strong> Objects stay in their creation level</li>
+                <li><strong>No Scaling:</strong> Objects maintain their original size</li>
+                <li><strong>No Positioning Issues:</strong> Objects stay exactly where they were drawn</li>
+                <li><strong>Predictable Behavior:</strong> Each level has its own independent set of objects</li>
+                <li><strong>Better Performance:</strong> No complex scaling calculations</li>
+            </ul>
+        </div>
+        
+        <div class="test-step">
+            <h3>🔍 Debug Information</h3>
+            <p>Watch the console for these messages:</p>
+            <ul>
+                <li>"Transfer requested from level X to Y - SKIPPED"</li>
+                <li>"Switching from level X to level Y"</li>
+                <li>"Switched to level Y"</li>
+            </ul>
+            <p>The statistics should clearly show:</p>
+            <ul>
+                <li>Current level object count</li>
+                <li>Total objects across all levels</li>
+                <li>Which level is currently active</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html> 

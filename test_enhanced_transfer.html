@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Transfer Test</title>
+    <style>
+        body {
+            font-family: monospace;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            background: #e9ecef;
+            border-radius: 6px;
+        }
+        .test-section h3 {
+            margin: 0 0 10px 0;
+            color: #495057;
+        }
+        .expected {
+            background: #d1ecf1;
+            border-left: 4px solid #17a2b8;
+        }
+        .debug {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+        }
+        .button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        .button:hover {
+            background: #0056b3;
+        }
+        .math {
+            font-family: monospace;
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Enhanced Transfer Test</h1>
+        <p>Testing the improved object transfer approach with proper scaling and bounds handling.</p>
+        
+        <div class="test-section">
+            <h3>📋 Test Procedure</h3>
+            <p>1. Open the main app and draw a circle at center (0, 0) with radius 50</p>
+            <p>2. Note the object's position and size</p>
+            <p>3. Zoom to 500,000x to trigger L0 → L1 transfer</p>
+            <p>4. Zoom back to 1x to trigger L1 → L0 transfer</p>
+            <p>5. Verify the circle is back to original size and position</p>
+            <button class="button" onclick="window.open('index.html', '_blank')">Open Main App</button>
+        </div>
+        
+        <div class="test-section expected">
+            <h3>📊 Expected Scaling Math</h3>
+            <div class="math">
+                <strong>L0 → L1 (Zoom In):</strong><br>
+                Scale Factor = 500,000 / 2 = 250,000<br>
+                Circle radius: 50 → 50 × 250,000 = 12,500,000<br>
+                Circle position: (0, 0) → (0, 0) [center stays at center]<br><br>
+                
+                <strong>L1 → L0 (Zoom Out):</strong><br>
+                Scale Factor = 1 / 250,000 = 0.000004<br>
+                Circle radius: 12,500,000 → 12,500,000 × 0.000004 = 50<br>
+                Circle position: (0, 0) → (0, 0) [center stays at center]<br><br>
+                
+                <strong>Result:</strong> Circle should be identical to original
+            </div>
+        </div>
+        
+        <div class="test-section debug">
+            <h3>🔍 Debug Information to Watch</h3>
+            <p>Open browser console (F12) and look for these messages:</p>
+            <ul>
+                <li><strong>Level Transfer:</strong> "[MULTI-LEVEL] Transferring X objects from level Y to level Z"</li>
+                <li><strong>Scale Factor:</strong> "[MULTI-LEVEL] Scale factor: X.XXXXXX, Center: (X.XX, Y.YY)"</li>
+                <li><strong>Object Before/After:</strong> Object state before and after scaling</li>
+                <li><strong>Bounds Checking:</strong> "[MULTI-LEVEL] Object X exceeds bounds, expanding quadtree"</li>
+                <li><strong>Quadtree Expansion:</strong> Old vs new quadtree bounds</li>
+            </ul>
+        </div>
+        
+        <div class="test-section">
+            <h3>🎯 What's Enhanced</h3>
+            <ul>
+                <li><strong>Proper Scale Factor Calculation:</strong> Uses inverse of upward scale for downward scale</li>
+                <li><strong>Detailed Debugging:</strong> Logs object states before/after scaling</li>
+                <li><strong>Bounds Checking:</strong> Verifies objects fit within quadtree bounds</li>
+                <li><strong>Automatic Bounds Expansion:</strong> Expands quadtree when objects exceed bounds</li>
+                <li><strong>Quadtree Rebuilding:</strong> Rebuilds quadtree after transfers for optimal performance</li>
+            </ul>
+        </div>
+        
+        <div class="test-section expected">
+            <h3>✅ Success Criteria</h3>
+            <ul>
+                <li>Objects remain visible during all zoom transitions</li>
+                <li>Objects return to original size and position after L1→L0 transfer</li>
+                <li>No "Object exceeds bounds" errors</li>
+                <li>Quadtree automatically expands if needed</li>
+                <li>Performance remains good after transfers</li>
+            </ul>
+        </div>
+        
+        <div class="test-section debug">
+            <h3>🐛 Common Issues to Check</h3>
+            <ul>
+                <li><strong>Objects disappear:</strong> Check if they're outside quadtree bounds</li>
+                <li><strong>Wrong object size:</strong> Verify scale factor calculations in console</li>
+                <li><strong>Performance issues:</strong> Check if quadtree is being rebuilt properly</li>
+                <li><strong>Positioning errors:</strong> Verify center point calculation</li>
+            </ul>
+        </div>
+        
+        <div class="test-section">
+            <h3>🧮 Test Calculations</h3>
+            <p>Test the math manually:</p>
+            <div class="math">
+                Original circle: radius = 50, center = (0, 0)<br>
+                Up scale: 50 × 250,000 = 12,500,000<br>
+                Down scale: 12,500,000 × 0.000004 = 50 ✓<br><br>
+                
+                Position scaling (relative to center (0,0)):<br>
+                Original: (0, 0)<br>
+                Up scale: 0 + (0 - 0) × 250,000 = 0<br>
+                Down scale: 0 + (0 - 0) × 0.000004 = 0 ✓
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

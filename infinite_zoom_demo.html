@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bidirectional Infinite Zoom Demo</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background-color: #1a1a1a;
+            font-family: Arial, sans-serif;
+            color: white;
+        }
+        
+        .demo-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .demo-box {
+            background-color: #2d2d2d;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .highlight {
+            background-color: #4CAF50;
+            color: black;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        
+        .instruction {
+            background-color: #FF6B6B;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        
+        .code {
+            background-color: #333;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            color: #A8E6CF;
+        }
+        
+        .direction-demo {
+            display: flex;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .direction-box {
+            flex: 1;
+            background-color: #3d3d3d;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        
+        .up-arrow {
+            color: #4CAF50;
+            font-size: 24px;
+        }
+        
+        .down-arrow {
+            color: #FF6B6B;
+            font-size: 24px;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <h1>🔄 Bidirectional Infinite Zoom Demo</h1>
+        
+        <div class="demo-box">
+            <h2>🌟 What is Bidirectional Infinite Zoom?</h2>
+            <p>Our system implements a revolutionary approach to infinite zoom that allows you to zoom <strong>forever</strong> in <strong>both directions</strong> without any limits!</p>
+            
+            <p>Traditional zoom systems hit a wall at their maximum zoom level. Our system cleverly <span class="highlight">resets the zoom level</span> when you reach the limits (both high and low), scaling all objects accordingly, giving you truly infinite zoom capability in both directions.</p>
+            
+            <div class="direction-demo">
+                <div class="direction-box">
+                    <div class="up-arrow">🔄⬆️</div>
+                    <h3>Zoom In</h3>
+                    <p>At 500,000x zoom, system resets to 2x and scales objects <strong>up</strong></p>
+                </div>
+                <div class="direction-box">
+                    <div class="down-arrow">🔄⬇️</div>
+                    <h3>Zoom Out</h3>
+                    <p>At 1x zoom (Level > 0), system resets to 250,000x and scales objects <strong>down</strong></p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="demo-box">
+            <h2>🎯 How to Test It</h2>
+            
+            <div class="instruction">
+                <strong>Step 1:</strong> Open the main application: <a href="index.html" target="_blank">index.html</a>
+            </div>
+            
+            <div class="instruction">
+                <strong>Step 2:</strong> Use your mouse wheel or keyboard to zoom in continuously until you reach 500,000x
+            </div>
+            
+            <div class="instruction">
+                <strong>Step 3:</strong> Watch the zoom level reset with 🔄⬆️ notification - you're now at Level 1!
+            </div>
+            
+            <div class="instruction">
+                <strong>Step 4:</strong> Now zoom OUT continuously until you reach 1x - watch the 🔄⬇️ notification as you go back to Level 0!
+            </div>
+        </div>
+        
+        <div class="demo-box">
+            <h2>🔍 What You'll See</h2>
+            
+            <h3>Normal Zoom (Level 0)</h3>
+            <div class="code">
+                Zoom Level: 125.456x
+                Visible Objects: 23
+                Total Objects: 156
+            </div>
+            
+            <h3>After Zoom In Reset (Level 1)</h3>
+            <div class="code">
+                Zoom Level: 2.50x (L1)
+                Effective Zoom: 6.25e+5x
+                Visible Objects: 12
+                Total Objects: 156
+            </div>
+            
+            <h3>After Zoom Out Reset (Back to Level 0)</h3>
+            <div class="code">
+                Zoom Level: 250000.00x
+                Visible Objects: 18
+                Total Objects: 156
+            </div>
+            
+            <h3>Multiple Levels Deep (Level 3)</h3>
+            <div class="code">
+                Zoom Level: 15.75x (L3)
+                Effective Zoom: 2.45e+15x
+                Visible Objects: 8
+                Total Objects: 156
+            </div>
+        </div>
+        
+        <div class="demo-box">
+            <h2>⚙️ Technical Details</h2>
+            
+            <h3>Bidirectional Reset Mechanism</h3>
+            <ul>
+                <li><strong>Upper Threshold:</strong> Reset occurs at 500,000x zoom (going up)</li>
+                <li><strong>Lower Threshold:</strong> Reset occurs at 1x zoom (going down, when level > 0)</li>
+                <li><strong>Up Target:</strong> Zoom resets to 2x when going up a level</li>
+                <li><strong>Down Target:</strong> Zoom resets to 250,000x when going down a level</li>
+                <li><strong>Seamless:</strong> All transitions are visually imperceptible</li>
+            </ul>
+            
+            <h3>Visual Feedback</h3>
+            <ul>
+                <li><strong>Level Counter:</strong> Shows current zoom level (L1, L2, L3, etc.)</li>
+                <li><strong>Effective Zoom:</strong> Displays true zoom using scientific notation</li>
+                <li><strong>Direction Notifications:</strong> 🔄⬆️ for up, 🔄⬇️ for down</li>
+                <li><strong>Seamless Navigation:</strong> Natural zoom behavior at all levels</li>
+            </ul>
+        </div>
+        
+        <div class="demo-box">
+            <h2>🔄 Bidirectional Flow Example</h2>
+            
+            <div class="code">
+Level 0: 1x → 500,000x (normal zoom)
+         ↓ (zoom in reset)
+Level 1: 2x → 500,000x (objects scaled up by 250,000x)
+         ↓ (zoom in reset)
+Level 2: 2x → 500,000x (objects scaled up by another 250,000x)
+         ↓ (zoom in reset)
+Level 3: 2x → 500,000x (objects scaled up by another 250,000x)
+         ↑ (zoom out reset)
+Level 2: 250,000x → 1x (objects scaled down by 250,000x)
+         ↑ (zoom out reset)
+Level 1: 250,000x → 1x (objects scaled down by 250,000x)
+         ↑ (zoom out reset)
+Level 0: 500,000x → 1x (back to normal zoom)
+            </div>
+        </div>
+        
+        <div class="demo-box">
+            <h2>🚀 Try It Now!</h2>
+            <p>Click the link below to open the infinite zoom application and experience bidirectional infinite zoom for yourself!</p>
+            
+            <a href="index.html" target="_blank" style="display: inline-block; background-color: #4CAF50; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-size: 18px; margin: 10px 0;">
+                🔄 Launch Bidirectional Infinite Zoom Demo
+            </a>
+            
+            <p><strong>Pro Tips:</strong></p>
+            <ul>
+                <li>Draw some shapes first, then zoom in AND out to see the scaling in both directions</li>
+                <li>Watch the stats panel to see the level transitions</li>
+                <li>Notice how objects maintain their relative positions during resets</li>
+                <li>Try the fractal pattern for the most impressive zoom experience</li>
+            </ul>
+        </div>
+        
+        <div class="demo-box">
+            <h2>🎨 Best Practices</h2>
+            <ul>
+                <li><strong>Create test content:</strong> Draw shapes at different zoom levels to see the scaling effect</li>
+                <li><strong>Use the fractal pattern:</strong> Generate Random Shapes for the best zoom experience</li>
+                <li><strong>Monitor the stats:</strong> Watch the zoom level transitions in the stats panel</li>
+                <li><strong>Test both directions:</strong> Zoom in to high levels, then zoom all the way back out</li>
+                <li><strong>Try SVG images:</strong> Place SVG images and zoom into them infinitely in both directions</li>
+                <li><strong>Notice the seamless transitions:</strong> The resets should be completely invisible</li>
+            </ul>
+        </div>
+        
+        <div class="demo-box">
+            <h2>🌟 Benefits of Bidirectional Infinite Zoom</h2>
+            <ul>
+                <li><strong>True Infinite Navigation:</strong> No limits in either direction</li>
+                <li><strong>Seamless Experience:</strong> Smooth transitions at all zoom levels</li>
+                <li><strong>Efficient Memory Usage:</strong> Only current zoom level objects are scaled</li>
+                <li><strong>Intuitive Controls:</strong> Natural zoom behavior that feels familiar</li>
+                <li><strong>Perfect for Exploration:</strong> Ideal for detailed work that requires both macro and micro views</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html> 
